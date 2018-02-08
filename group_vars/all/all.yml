@@ -1,0 +1,16 @@
+# group_vars/all/all.yml
+
+region: "us-east-1"
+zone: "us-east-1a"
+keypair: "key-pair"
+security_groups: "game_security_group"
+instance_type: "t2.micro"
+project_name:  "game"
+ami: "ami"
+env : "stage"
+subnet: ["","","",""]            #subnet-f81560c7
+volumes:
+  - device_name: "/dev/sda1"
+    device_type: "gp2"
+    volume_size: "8"
+    delete_on_termination: "true"

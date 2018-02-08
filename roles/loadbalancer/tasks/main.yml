@@ -1,0 +1,24 @@
+# Basic configuration
+
+- local_action:
+    module: ec2_elb_lb
+    name: "{{project_name}}-lb"
+    state: present
+    region: "{{region}}"
+    security_group_names: ['{{security_groups}}']
+    cross_az_load_balancing: yes
+    subnets: [ '{{vpc.subnets[0].id}}', '{{vpc.subnets[1].id}}', '{{vpc.subnets[2].id}}', '{{vpc.subnets[3].id}}' ]
+    listeners:
+      - protocol: http
+        load_balancer_port: 80
+        instance_port: 80
+    health_check:
+        ping_protocol: http # options are http, https, ssl, tcp
+        ping_port: 80
+        ping_path: "/ping.html" # not required for tcp or ssl
+        response_timeout: 5 # seconds
+        interval: 30 # seconds
+        unhealthy_threshold: 2
+        healthy_threshold: 10
+    tags: { "Environment":"production","Name" :"{{project_name}}-lb"}
+  delegate_to: localhost

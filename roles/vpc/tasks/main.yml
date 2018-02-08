@@ -1,0 +1,33 @@
+
+
+# Full creation example with subnets and optional availability zones.
+# The absence or presence of subnets deletes or creates them respectively.
+    - ec2_vpc:
+        state: present
+        cidr_block: 172.33.0.0/16
+        resource_tags: { "Environment":"Development","Name" :"{{project_name}}"}
+        subnets:
+          - cidr: 172.33.16.0/20
+            az: us-east-1a
+            resource_tags: { "Environment":"production" ,"Name" :"{{project_name}}"}
+          - cidr: 172.33.32.0/20
+            az: us-east-1c
+            resource_tags: { "Environment":"production","Name" :"{{project_name}}"}
+          - cidr: 172.33.64.0/20
+            az: us-east-1d
+            resource_tags: { "Environment":"production", "Name" :"{{project_name}}"}
+          - cidr: 172.33.0.0/20
+            az: us-east-1e
+            resource_tags: { "Environment":"production","Name" :"{{project_name}}"}
+        internet_gateway: True
+        route_tables:
+          - subnets:
+              - 172.33.16.0/20
+              - 172.33.32.0/20
+              - 172.33.64.0/20
+              - 172.33.0.0/20
+            routes:
+              - dest: 0.0.0.0/0
+                gw: igw
+        region: us-east-1
+      register: vpc

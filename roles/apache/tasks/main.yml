@@ -1,0 +1,6 @@
+# roles/apache/tasks/main.yml
+- name: Enable and start apache
+  service:
+    name: apache
+    enabled: yes
+    state: restarted
