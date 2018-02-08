@@ -1,0 +1,48 @@
+ - name: Create security group
+   ec2_group:
+    name: "{{ project_name }}_security_group"
+    description: "{{ project_name }} security group"
+    region: "{{ region }}"
+    rules:
+      - proto: tcp  # ssh
+        from_port: 22
+        to_port: 22
+        cidr_ip: 0.0.0.0/0
+      - proto: tcp  # http
+        from_port: 80
+        to_port: 80
+        cidr_ip: 0.0.0.0/0
+      - proto: tcp  # https
+        from_port: 443
+        to_port: 443
+        cidr_ip: 0.0.0.0/0
+    rules_egress:
+      - proto: all
+        cidr_ip: 0.0.0.0/0
+   register: test_firewall
+
+ - name: Create an EC2 key
+   ec2_key:
+     name: "{{ key_pair }}"
+     region: "{{ region }}"
+   register: ec2_key
+
+ - name: Save private key
+   copy: content="{{ ec2_key.key.private_key }}" dest="{{ key_pair }}.pem" mode=0600
+   when: ec2_key.changed
+
+ - name: Create an EC2 instance
+   ec2:
+    key_name: "{{ key_pair }}"
+    region: "{{ region }}"
+    group_id: "{{ test_firewall.group_id }}"
+    instance_type: "{{ instance_type }}"
+    image: "{{ami}}"
+    wait: yes
+    instance_tags:
+        env: "{{env}}"
+    count_tag: env
+    exact_count: 1
+    vpc_subnet_id: "{{subnet}}"
+    assign_public_ip: yes
+   register: ec2

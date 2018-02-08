@@ -1,0 +1,30 @@
+#establish.yml
+- hosts: localhost
+  connection: local
+  gather_facts: false
+  roles:
+    - role: vpc
+      name: vpc-create
+#      register: vpc_result
+
+- hosts: localhost
+  connection: local
+  gather_facts: no
+  tasks:
+    - debug: var=vpc.vpc_id
+      when: vpc is defined
+  roles:
+    - role: security
+      name: security-group-create
+- hosts: localhost
+  connection: local
+  gather_facts: no
+  tasks:
+    - debug: var=vpc.vpc_id
+      when: vpc is defined
+    - debug: var=vpc.subnets[0].id
+      when: vpc is defined
+  roles:
+    -  launchconfig
+    -  loadbalancer
+    -  autoscale

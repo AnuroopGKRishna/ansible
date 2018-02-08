@@ -1,0 +1,17 @@
+# create a launch configuration using an AMI image and instance type as a basis
+
+- name:
+  ec2_lc:
+    name: "{{project_name}}-lc"
+    image_id: "{{ami}}"
+    key_name: "{{keypair}}"
+    vpc_id : "{{vpc.vpc_id}}"
+    security_groups: ['default','{{security_groups}}']
+    instance_type: "{{instance_type}}"
+    user_data: "{{ lookup('file', '../files/userdata.sh') }}"
+    region: "{{region}}"
+    volumes:
+    - device_name: /dev/sda1
+      volume_size: 8
+      delete_on_termination: true
+    assign_public_ip: yes
