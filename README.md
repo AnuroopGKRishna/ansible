@@ -9,9 +9,10 @@ Add a new keypair for SSH access to your instances. You can  create a new privat
 
 Preparing Ansible
 ------
-Insta Boto for AWS communications, if may differ for different platforms.
-```pip install python-boto awscli
-```
+Install Boto for AWS communications, if may differ for different platforms.
+````
+pip install python-boto awscli
+````
 Install Ansible 2.3.x, for Ubuntu you can get that from the Ansible PPA.
 ```
 add-apt-repository ppa:ansible/ansible
