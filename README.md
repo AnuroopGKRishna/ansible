@@ -1,4 +1,4 @@
-Ansible with Aws as Infastrurcture
+Ansible With AWS As Infastrurcture
 ------
 The goal of  the project is to build our entire Infastrurcture from scratch, save for a few manually created resources at the outset.It uses anslible role and playbook whcih runs the deployment lifecycle.
 
@@ -9,18 +9,20 @@ Add a new keypair for SSH access to your instances. You can  create a new privat
 
 Preparing Ansible
 ------
- Insta Boto for AWS communications, if may differ for different platforms.
-pip install python-boto awscli
+Insta Boto for AWS communications, if may differ for different platforms.
+```pip install python-boto awscli
+```
 Install Ansible 2.3.x, for Ubuntu you can get that from the Ansible PPA.
-
+```
 add-apt-repository ppa:ansible/ansible
 apt-get install ansible
+```
 Add  your AWS access/secret keys into ~/.aws/credentials
-
+````
 [Credentials]
 aws_access_key_id = <your_access_key_here>
 aws_secret_access_key = <your_secret_key_here>
-
+````
 Step 1: VPC  creation and  subnet adding for 4 zones.
 -----
 For creating the vpc and vpc subnet we need to add group variables (means global variables) that are accessable to entire project scope. Define the region ,zone ,the account key pair which used to log into the instance.Add the name of the securtiy group which you need to provide the access to the port connection
@@ -130,7 +132,8 @@ Now that   I  have already created an AMI image that havs basci applicaton setup
       volume_size: 8
       delete_on_termination: true
     assign_public_ip: yes
----
+````
+````
 # roles/launchconfig/files/userdata.sh
 #!/bin/bash
 rm /var/www/html/ping.html
