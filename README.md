@@ -1,15 +1,14 @@
-# ansible
 Ansible with Aws as Infastrurcture
-
+------
 The goal of  the project is to build our entire Infastrurcture from scratch, save for a few manually created resources at the outset.It uses anslible role and playbook whcih runs the deployment lifecycle.
 
 Preparing AWS
-
+----
 Create an account in Aws
 Add a new keypair for SSH access to your instances. You can  create a new private keypair.
 
 Preparing Ansible
-
+------
  Insta Boto for AWS communications, if may differ for different platforms.
 pip install python-boto awscli
 Install Ansible 2.3.x, for Ubuntu you can get that from the Ansible PPA.
@@ -23,9 +22,9 @@ aws_access_key_id = <your_access_key_here>
 aws_secret_access_key = <your_secret_key_here>
 
 Step 1: VPC  creation and  subnet adding for 4 zones.
-
+-----
 For creating the vpc and vpc subnet we need to add group variables (means global variables) that are accessable to entire project scope. Define the region ,zone ,the account key pair which used to log into the instance.Add the name of the securtiy group which you need to provide the access to the port connection
----
+````
 # group_vars/all/all.yml
 
 region: "us-east-1"
@@ -42,8 +41,9 @@ volumes:
     device_type: "gp2"
     volume_size: "8"
     delete_on_termination: "true"
-------
+`````
 We have add the role for the vpc creation .Add teh tages for subnet  identification .(I  have added the 4 different subnets )
+`````
 # roles/vp/tasks/main.yml
     - ec2_vpc:
         state: present
@@ -74,13 +74,13 @@ We have add the role for the vpc creation .Add teh tages for subnet  identificat
                 gw: igw
         region: us-east-1
       register: vpc
-
+`````
 
 Step 2: Creating securtiy groups for the instances access
-
+------
 Providing secuity group with http,https,ssh ascess to the instances so we cah check the instacnes working state and log files by loging into the system.
 
----
+````
 # roles/security/tasks/main.yml
 
 - name: Create security group
@@ -106,13 +106,13 @@ Providing secuity group with http,https,ssh ascess to the instances so we cah ch
      - proto: all
        cidr_ip: 0.0.0.0/0
   register: gamefirewall
----
+````
 
 Step 3: Creating lanuch configuraton
-
+------
 Now that   I  have already created an AMI image that havs basci applicaton setups such as apache,curl services.
 
----
+````
 # roles/launchconfig/tasks/main.yml
 
 - name:
@@ -146,8 +146,8 @@ service ntp stop
 ntpd -gq
 service ntp start
 Step 4: Creating Elastic load balancer
-
----
+````
+````
 # roles/laodbalancer/tasks/main.yml
 
 
@@ -173,11 +173,10 @@ Step 4: Creating Elastic load balancer
         healthy_threshold: 10
     tags: { "Environment":"production","Name" :"{{project_name}}-lb"}
   delegate_to: localhost
-
-
+````
 Step 5: Create auto scaling group
-
----
+----
+````
 # roles/autoscale/tasks/main.yml
 
 - ec2_asg:
@@ -195,10 +194,11 @@ Step 5: Create auto scaling group
       - name: "{{project_name}}-asg"
         propagate_at_launch: no
 
----
+````
 
 Step 6: Create the playbook
----
+----
+````
 #establish.yml
 - hosts: localhost
   connection: local
@@ -229,7 +229,7 @@ Step 6: Create the playbook
     -  launchconfig
     -  loadbalancer
     -  autoscale
----
+````
 
 
 
